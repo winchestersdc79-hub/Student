@@ -1,64 +1,88 @@
 import 'package:flutter/material.dart';
 import '../models/task.dart';
+import '../services/storage_service.dart';
 
 class TaskProvider extends ChangeNotifier {
-  final List<Task> _tasks = [];
-  final List<Task> _archivedTasks = [];
+  List<Task> _tasks = [];
+  List<Task> _archivedTasks = [];
+  bool _isLoading = true;
 
   List<Task> get tasks => _tasks;
   List<Task> get archivedTasks => _archivedTasks;
+  bool get isLoading => _isLoading;
+
+  TaskProvider() {
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    _tasks = await StorageService.loadTasks();
+    _archivedTasks = await StorageService.loadArchivedTasks();
+    _isLoading = false;
+    notifyListeners();
+  }
 
   List<Task> getTasksByQuadrant(TaskQuadrant quadrant) {
     return _tasks.where((t) => t.quadrant == quadrant && !t.isCompleted).toList();
   }
 
-  void addTask(Task task) {
+  Future<void> addTask(Task task) async {
     _tasks.add(task);
     notifyListeners();
+    await StorageService.saveTasks(_tasks);
   }
 
-  void completeTask(Task task) {
+  Future<void> completeTask(Task task) async {
     task.isCompleted = true;
     task.completedAt = DateTime.now();
     _tasks.remove(task);
     _archivedTasks.add(task);
     notifyListeners();
+    await StorageService.saveTasks(_tasks);
+    await StorageService.saveArchivedTasks(_archivedTasks);
   }
 
-  void restoreTask(Task task) {
+  Future<void> restoreTask(Task task) async {
     _archivedTasks.remove(task);
     task.isCompleted = false;
     task.completedAt = null;
     _tasks.add(task);
     notifyListeners();
+    await StorageService.saveTasks(_tasks);
+    await StorageService.saveArchivedTasks(_archivedTasks);
   }
 
-  void deleteTask(Task task) {
+  Future<void> deleteTask(Task task) async {
     _archivedTasks.remove(task);
     notifyListeners();
+    await StorageService.saveArchivedTasks(_archivedTasks);
   }
 
-  void moveTask(Task task, TaskQuadrant newQuadrant) {
+  Future<void> moveTask(Task task, TaskQuadrant newQuadrant) async {
     task.quadrant = newQuadrant;
     notifyListeners();
+    await StorageService.saveTasks(_tasks);
   }
 
-  void pinTask(Task task) {
+  Future<void> pinTask(Task task) async {
     task.isPinned = !task.isPinned;
     notifyListeners();
+    await StorageService.saveTasks(_tasks);
   }
 
-  void checkAndDeleteOldTasks() {
+  Future<void> checkAndDeleteOldTasks() async {
     final toDelete = _archivedTasks.where((t) {
       final days = DateTime.now()
           .difference(t.completedAt ?? t.createdAt)
           .inDays;
       return days >= 60;
     }).toList();
-
     for (final task in toDelete) {
       _archivedTasks.remove(task);
     }
-    if (toDelete.isNotEmpty) notifyListeners();
+    if (toDelete.isNotEmpty) {
+      notifyListeners();
+      await StorageService.saveArchivedTasks(_archivedTasks);
+    }
   }
 }
