@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/task_provider.dart';
+import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const ProductivityApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => TaskProvider(),
+      child: const ProductivityApp(),
+    ),
+  );
 }
 
 class ProductivityApp extends StatelessWidget {
@@ -20,22 +28,6 @@ class ProductivityApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Productivity App'),
-      ),
-      body: const Center(
-        child: Text('Добро пожаловать!'),
-      ),
     );
   }
 }
