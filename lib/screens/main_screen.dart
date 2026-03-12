@@ -4,6 +4,7 @@ import 'pomodoro_screen.dart';
 import 'statistics_screen.dart';
 import 'archive_screen.dart';
 import 'habits_screen.dart';
+import 'calendar_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 
@@ -23,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
 
     final screens = [
       const HomeScreen(),
+      const CalendarScreen(),
       const PomodoroScreen(),
       const HabitsScreen(),
       const StatisticsScreen(),
@@ -45,6 +47,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.grid_view, color: Colors.white54),
             selectedIcon: Icon(Icons.grid_view, color: Colors.white),
             label: 'Задачи',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month, color: Colors.white54),
+            selectedIcon: Icon(Icons.calendar_month, color: Colors.white),
+            label: 'Календарь',
           ),
           NavigationDestination(
             icon: Icon(Icons.timer, color: Colors.white54),
