@@ -7,6 +7,7 @@ import 'habits_screen.dart';
 import 'calendar_screen.dart';
 import 'ai_screen.dart';
 import 'search_screen.dart';
+import 'settings_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 
@@ -37,6 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         onRestore: provider.restoreTask,
         onDelete: provider.deleteTask,
       ),
+      const SettingsScreen(),
     ];
 
     return Scaffold(
@@ -86,6 +88,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.archive, color: Colors.white54),
             selectedIcon: Icon(Icons.archive, color: Colors.white),
             label: 'Архив',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings, color: Colors.white54),
+            selectedIcon: Icon(Icons.settings, color: Colors.white),
+            label: 'Настройки',
           ),
         ],
       ),
