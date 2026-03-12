@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/task.dart';
 import '../providers/task_provider.dart';
-import 'package:provider/provider.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -12,14 +12,15 @@ class StatisticsScreen extends StatelessWidget {
     final archived = provider.archivedTasks;
     final active = provider.tasks;
     final total = archived.length + active.length;
+    final percent = total == 0 ? 0.0 : archived.length / total;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: const Color(0xFF0D0D1A),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF16213E),
+        backgroundColor: const Color(0xFF0D0D1A),
         title: const Text(
           '📊 Статистика',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -28,103 +29,137 @@ class StatisticsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader('Общая статистика'),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _buildStatCard('Всего задач', '$total', Colors.purple),
-                const SizedBox(width: 12),
-                _buildStatCard('Выполнено', '${archived.length}', Colors.green),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _buildStatCard('Активных', '${active.length}', Colors.orange),
-                const SizedBox(width: 12),
-                _buildStatCard(
-                  'Процент',
-                  total == 0 ? '0%' : '${(archived.length / total * 100).toInt()}%',
-                  Colors.blue,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF9B59B6), Color(0xFF6C3483)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Общий прогресс',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${(percent * 100).toInt()}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: percent,
+                      backgroundColor: Colors.white24,
+                      valueColor: const AlwaysStoppedAnimation(Colors.white),
+                      minHeight: 8,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildMini('Всего', '$total'),
+                      _buildMini('Активных', '${active.length}'),
+                      _buildMini('Выполнено', '${archived.length}'),
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
-            _buildHeader('По квадрантам'),
-            const SizedBox(height: 12),
-            _buildQuadrantStat('🔴 Важно & Срочно', TaskQuadrant.urgentImportant, provider, Colors.red),
-            _buildQuadrantStat('🟡 Важно & Не срочно', TaskQuadrant.notUrgentImportant, provider, Colors.orange),
-            _buildQuadrantStat('🟢 Не важно & Срочно', TaskQuadrant.urgentNotImportant, provider, Colors.green),
-            _buildQuadrantStat('⚪ Не важно & Не срочно', TaskQuadrant.notUrgentNotImportant, provider, Colors.grey),
-            const SizedBox(height: 24),
-            _buildHeader('По приоритету'),
-            const SizedBox(height: 12),
-            _buildPriorityStat('🔥 P1', TaskPriority.p1, provider, Colors.red),
-            _buildPriorityStat('⚡ P2', TaskPriority.p2, provider, Colors.orange),
-            _buildPriorityStat('💤 P3', TaskPriority.p3, provider, Colors.grey),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String label, String value, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
+            const Text(
+              'По квадрантам',
               style: TextStyle(
-                color: color,
-                fontSize: 32,
+                color: Colors.white,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white54, fontSize: 12),
-              textAlign: TextAlign.center,
+            const SizedBox(height: 12),
+            _buildQuadrantStat('🔴 Важно & Срочно', TaskQuadrant.urgentImportant, provider, const Color(0xFFE74C3C), total),
+            _buildQuadrantStat('🟡 Важно & Не срочно', TaskQuadrant.notUrgentImportant, provider, const Color(0xFFF39C12), total),
+            _buildQuadrantStat('🟢 Не важно & Срочно', TaskQuadrant.urgentNotImportant, provider, const Color(0xFF27AE60), total),
+            _buildQuadrantStat('⚪ Не важно & Не срочно', TaskQuadrant.notUrgentNotImportant, provider, const Color(0xFF7F8C8D), total),
+            const SizedBox(height: 24),
+            const Text(
+              'По приоритету',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            const SizedBox(height: 12),
+            _buildPriorityStat('🔥 P1 — Высокий', TaskPriority.p1, provider, const Color(0xFFE74C3C)),
+            _buildPriorityStat('⚡ P2 — Средний', TaskPriority.p2, provider, const Color(0xFFF39C12)),
+            _buildPriorityStat('💤 P3 — Низкий', TaskPriority.p3, provider, const Color(0xFF7F8C8D)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildQuadrantStat(String label, TaskQuadrant quadrant, TaskProvider provider, Color color) {
+  Widget _buildMini(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white60, fontSize: 12),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuadrantStat(String label, TaskQuadrant quadrant, TaskProvider provider, Color color, int total) {
     final count = provider.getTasksByQuadrant(quadrant).length;
+    final percent = total == 0 ? 0.0 : count / total;
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF16213E),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70)),
-          Text('$count задач', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              Text('$count задач', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: percent,
+              backgroundColor: color.withOpacity(0.1),
+              valueColor: AlwaysStoppedAnimation(color),
+              minHeight: 6,
+            ),
+          ),
         ],
       ),
     );
@@ -133,18 +168,28 @@ class StatisticsScreen extends StatelessWidget {
   Widget _buildPriorityStat(String label, TaskPriority priority, TaskProvider provider, Color color) {
     final count = provider.tasks.where((t) => t.priority == priority).length;
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF16213E),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: Colors.white70)),
-          Text('$count задач', style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              '$count',
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );
