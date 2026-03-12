@@ -16,12 +16,12 @@ class ArchiveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: const Color(0xFF0D0D1A),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF16213E),
+        backgroundColor: const Color(0xFF0D0D1A),
         title: const Text(
           '🗄️ Архив',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -34,18 +34,12 @@ class ArchiveScreen extends StatelessWidget {
                   SizedBox(height: 16),
                   Text(
                     'Архив пуст',
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(color: Colors.white54, fontSize: 18),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Выполненные задачи появятся здесь',
-                    style: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white38, fontSize: 14),
                   ),
                 ],
               ),
@@ -53,12 +47,12 @@ class ArchiveScreen extends StatelessWidget {
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: archivedTasks.length,
-              itemBuilder: (context, index) {
-                final task = archivedTasks[index];
-                final daysInArchive = DateTime.now()
+              itemBuilder: (ctx, i) {
+                final task = archivedTasks[i];
+                final days = DateTime.now()
                     .difference(task.completedAt ?? task.createdAt)
                     .inDays;
-                final willDeleteSoon = daysInArchive >= 50;
+                final isOld = days >= 50;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -66,18 +60,19 @@ class ArchiveScreen extends StatelessWidget {
                     color: const Color(0xFF16213E),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: willDeleteSoon
+                      color: isOld
                           ? Colors.orange.withOpacity(0.5)
                           : Colors.white12,
                     ),
                   ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.all(12),
+                    contentPadding: const EdgeInsets.all(16),
                     title: Text(
                       task.title,
                       style: const TextStyle(
                         color: Colors.white70,
                         decoration: TextDecoration.lineThrough,
+                        fontSize: 16,
                       ),
                     ),
                     subtitle: Column(
@@ -85,17 +80,15 @@ class ArchiveScreen extends StatelessWidget {
                       children: [
                         const SizedBox(height: 4),
                         Text(
-                          'В архиве: $daysInArchive дней',
+                          '✅ Выполнено $days дней назад',
                           style: TextStyle(
-                            color: willDeleteSoon
-                                ? Colors.orange
-                                : Colors.white38,
+                            color: isOld ? Colors.orange : Colors.white38,
                             fontSize: 12,
                           ),
                         ),
-                        if (willDeleteSoon)
+                        if (isOld)
                           const Text(
-                            '⚠️ Скоро будет удалено автоматически',
+                            '⚠️ Будет удалено через 10 дней',
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: 11,
@@ -106,23 +99,19 @@ class ArchiveScreen extends StatelessWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Восстановить
                         IconButton(
                           icon: const Icon(
                             Icons.restore,
-                            color: Colors.green,
+                            color: Color(0xFF9B59B6),
                           ),
                           onPressed: () => onRestore(task),
-                          tooltip: 'Восстановить',
                         ),
-                        // Удалить
                         IconButton(
                           icon: const Icon(
-                            Icons.delete_forever,
+                            Icons.delete_outline,
                             color: Colors.red,
                           ),
                           onPressed: () => _confirmDelete(context, task),
-                          tooltip: 'Удалить',
                         ),
                       ],
                     ),
@@ -143,22 +132,31 @@ class ArchiveScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         content: Text(
-          'Задача "${task.title}" будет удалена навсегда!',
+          '"${task.title}" будет удалена навсегда.',
           style: const TextStyle(color: Colors.white70),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Отмена'),
+            child: const Text(
+              'Отмена',
+              style: TextStyle(color: Colors.white54),
+            ),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
-              Navigator.pop(ctx);
               onDelete(task);
+              Navigator.pop(ctx);
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             child: const Text(
               'Удалить',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],
