@@ -5,6 +5,7 @@ import 'statistics_screen.dart';
 import 'archive_screen.dart';
 import 'habits_screen.dart';
 import 'calendar_screen.dart';
+import 'ai_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 
@@ -27,6 +28,7 @@ class _MainScreenState extends State<MainScreen> {
       const CalendarScreen(),
       const PomodoroScreen(),
       const HabitsScreen(),
+      const AiScreen(),
       const StatisticsScreen(),
       ArchiveScreen(
         archivedTasks: provider.archivedTasks,
@@ -62,6 +64,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.check_circle, color: Colors.white54),
             selectedIcon: Icon(Icons.check_circle, color: Colors.white),
             label: 'Привычки',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.auto_awesome, color: Colors.white54),
+            selectedIcon: Icon(Icons.auto_awesome, color: Colors.white),
+            label: 'AI',
           ),
           NavigationDestination(
             icon: Icon(Icons.bar_chart, color: Colors.white54),
