@@ -1,13 +1,19 @@
 name: Flutter CI & Build APK
+
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true   # ← это спасает сейчас
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
