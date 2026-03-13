@@ -10,7 +10,6 @@ import 'calendar_screen.dart';
 import 'ai_screen.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
-import 'pin_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
