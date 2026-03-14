@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true   # ← это спасает сейчас
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +28,11 @@ jobs:
         run: flutter pub get
       - name: Analyze
         run: flutter analyze --no-fatal-infos
+      - name: Create android folder
+        run: |
+          flutter create --project-name productivity_app temp_project
+          cp -r temp_project/android ./android
+          rm -rf temp_project
       - name: Build APK
         run: flutter build apk --release --no-shrink
       - name: Upload APK
