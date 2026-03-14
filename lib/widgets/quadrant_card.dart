@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:productivity_app/models/task.dart';
 
 class QuadrantCard extends StatelessWidget {
@@ -19,39 +21,50 @@ class QuadrantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF16213E),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
+    return GlassmorphicContainer(
+      width: double.infinity,
+      height: double.infinity,
+      borderRadius: 24,
+      blur: 15,
+      alignment: Alignment.bottomCenter,
+      border: 2,
+      linearGradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          color.withOpacity(0.15),
+          color.withOpacity(0.05),
+        ],
+      ),
+      borderGradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          color.withOpacity(0.5),
+          color.withOpacity(0.2),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
             child: Row(
               children: [
-                Icon(icon, color: color, size: 20),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 18),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     title,
-                    style: TextStyle(
-                      color: color,
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),
@@ -65,93 +78,53 @@ class QuadrantCard extends StatelessWidget {
           Expanded(
             child: tasks.isEmpty
                 ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add_circle_outline,
-                          color: color.withOpacity(0.3),
-                          size: 28,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Пусто',
-                          style: TextStyle(
-                            color: color.withOpacity(0.3),
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
+                    child: Icon(
+                      Icons.add_task,
+                      color: color.withOpacity(0.2),
+                      size: 32,
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     itemCount: tasks.length > 3 ? 3 : tasks.length,
-                    itemBuilder: (ctx, i) {
-                      final task = tasks[i];
+                    itemBuilder: (context, index) {
                       return Container(
-                        margin: const EdgeInsets.only(bottom: 4),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
-                        ),
+                        margin: const EdgeInsets.only(bottom: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.08),
-                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                task.title,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 11,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          tasks[index].title,
+                          style: GoogleFonts.inter(
+                            color: Colors.white70,
+                            fontSize: 10,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       );
                     },
                   ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   '${tasks.length} задач',
-                  style: TextStyle(
-                    color: color.withOpacity(0.6),
-                    fontSize: 10,
+                  style: GoogleFonts.inter(
+                    color: Colors.white38,
+                    fontSize: 9,
                   ),
                 ),
-                GestureDetector(
-                  onTap: onAddTask,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Icon(Icons.add, color: color, size: 16),
-                  ),
+                IconButton(
+                  onPressed: onAddTask,
+                  icon: Icon(Icons.add_circle, color: color, size: 24),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
