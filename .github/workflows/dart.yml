@@ -35,16 +35,15 @@ jobs:
           rm -rf temp_project
       - name: Copy app icons
         run: |
+          pip3 install Pillow --break-system-packages
           unzip AppIcons.zip -d app_icons
-          ls app_icons/android/mipmap-mdpi/
           python3 -c "
           from PIL import Image
-          import shutil
           sizes = {'mipmap-mdpi': 48, 'mipmap-hdpi': 72, 'mipmap-xhdpi': 96, 'mipmap-xxhdpi': 144, 'mipmap-xxxhdpi': 192}
           for folder, size in sizes.items():
-              img = Image.open(f'app_icons/android/{folder}/Sviroxk.png')
+              img = Image.open('app_icons/android/' + folder + '/Sviroxk.png')
               img = img.resize((size, size))
-              img.save(f'android/app/src/main/res/{folder}/ic_launcher.png')
+              img.save('android/app/src/main/res/' + folder + '/ic_launcher.png')
           "
       - name: Build APK
         run: flutter build apk --release --no-shrink
