@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:productivity_app/providers/task_provider.dart';
+import '../providers/task_provider.dart';
 import 'home_screen.dart';
 import 'pomodoro_screen.dart';
 import 'statistics_screen.dart';

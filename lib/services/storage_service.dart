@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:productivity_app/models/task.dart';
-import 'package:productivity_app/screens/habits_screen.dart';
+import '../models/task.dart';
+import '../screens/habits_screen.dart';
 
 class StorageService {
   static const String _tasksKey = 'tasks';

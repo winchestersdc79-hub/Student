@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:productivity_app/models/task.dart';
-import 'package:productivity_app/services/storage_service.dart';
-import 'package:productivity_app/services/notification_service.dart';
-import 'package:productivity_app/screens/habits_screen.dart';
+import '../models/task.dart';
+import '../services/storage_service.dart';
+import '../services/notification_service.dart';
+import '../screens/habits_screen.dart';
 
 class TaskProvider extends ChangeNotifier {
   List<Task> _tasks = [];
